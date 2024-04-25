@@ -3,7 +3,6 @@ import csv
 
 varosok = ["Sopron", "Gyor", "Szombathely", "Budapest", "Veszprem", "Szekesfehervar", "Zalaegerszeg"]
 
-
 def adatok_beolvas(varosok: list) -> list[dict]:
     adatok : list[dict] = []
     for varos in varosok:
@@ -17,8 +16,21 @@ def adatok_beolvas(varosok: list) -> list[dict]:
 
 
 def print_csapadekos_napok(adatok: list[dict]):
-    datumok = {adat['daily']['time'][idx] for adat in adatok for idx, csapadek in enumerate(adat['daily']['precipitation_hours']) if csapadek >= 1.0}
-    print(f'Csapadékos napok száma: {len(datumok)}')
+    #datumok = {adat['daily']['time'][idx] for adat in adatok for idx, csapadek in enumerate(adat['daily']['precipitation_hours']) if csapadek >= 1.0}
+
+    napok = set()
+    # beolvasásnál látszik: az adatok list[] városonként tartalmaz egy dictet
+    for adat in adatok:     # adat = adott város adatai
+        # enumeráljuk a csapadék adatokat, mert kelleni fog az index a dátum hoz
+        for idx, csapadek in enumerate(adat['daily']['precipitation_hours']):
+            if csapadek >= 1.0:
+                # ha volt csapadék, akkor index segítségével az ahhoz tartozó 
+                # dátumot hozzáadjuk a sethez. ez azért is jó, mert a dátum 
+                # egyedi azonosító, a set pedig azért kell, hogy egy dátum ne
+                # szerepelhessen többször 
+                napok.add(adat['daily']['time'][idx])
+        
+    print(f'Csapadékos napok száma: {len(napok)}')
 
 
 def print_max_szelsebesseg(adatok: list[dict]):
